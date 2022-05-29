@@ -1,11 +1,13 @@
 
 const initializeCtx = height => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d',)
-    ctx.canvas.height = height
-    ctx.canvas.width = 16 / 9 * height
-    ctx.imageSmoothingEnabled = false
-    ctx.canvas.style['image-rendering'] = 'pixelated'
+    // const canvas = document.createElement('canvas')
+    // const ctx = canvas.getContext('2d', { alpha: true })
+    // ctx.canvas.height = height
+    // ctx.canvas.width = 16 / 9 * height
+    // ctx.imageSmoothingEnabled = false
+    // ctx.canvas.style['image-rendering'] = 'pixelated'
+    const ctx = createBuffer(height)
+    const canvas = ctx.canvas
     document.body.append(canvas)
     const resize = () => {
 
@@ -25,6 +27,15 @@ const initializeCtx = height => {
     resize()
     return ctx
 }
+const createBuffer = height => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d', { alpha: true })
+    ctx.canvas.height = height
+    ctx.canvas.width = 16 / 9 * height
+    ctx.imageSmoothingEnabled = false
+    ctx.canvas.style['image-rendering'] = 'pixelated'
+    return ctx
+}
 const Display = function (height, scale = 1) {
     const ctx = initializeCtx(height * scale)
     const draw = (img, sx, sy, sw, sh, x, y, w, h) => ctx.drawImage(img, sx, sy, sw, sh, x * scale, y * scale, w * scale, h * scale)
@@ -37,7 +48,7 @@ const Display = function (height, scale = 1) {
         height = height ?? width
         return [index % columns * width, Math.floor(index / columns) * height]
     }
-
+    const mapBuffers = []
     return {
         ctx,
         drawFrame(frame, pos, direction = 1) {
@@ -54,38 +65,35 @@ const Display = function (height, scale = 1) {
             sprite.animate()
             const img = sprite.getFrame()
             this.drawFrame(img, [entity.x, entity.y], entity.direction * (entity.reversed ? -1 : 1))
-            // if ((entity.direction == 1) != entity.reversed) {
-            //     draw(...img, entity.x, entity.y, entity.width, entity.height)
-            // }
-            // if ((entity.direction == -1) != entity.reversed) {
-            //     drawFlipped(...img, entity.x, entity.y, entity.width, entity.height)
-            // }
+
         },
-        drawMap(map) {
-            map.layers.forEach(layer => {
+        drawMap() {
+            mapBuffers.forEach(buffer => ctx.drawImage(buffer.canvas, 0, 0))
+        },
+        createMapBuffer(map, buffer) {
+            if (!mapBuffers[buffer]) mapBuffers[buffer] = createBuffer(height * scale)
+            const layer = map.layers[buffer]
 
-                layer.data.forEach((tile, tileIndex) => {
+            layer.forEach((tile) => {
 
-                    if (tile) {
-                        const tileset = map.tilesets.find(x => tile >= x.firstgid && tile <= x.firstgid + x.tilecount)
+                if (tile) {
+                    mapBuffers[buffer].drawImage(tile.img, tile.sx, tile.sy, tile.sh, tile.sw, tile.x, tile.y, tile.h, tile.w)
+                    // const tileset = map.tilesets.find(x => tile >= x.firstgid && tile <= x.firstgid + x.tilecount)
 
-                        const [sx, sy] = indexToCoord(tile - tileset.firstgid, tileset.columns, tileset.tileheight, tileset.tilewidth)
-                        const [x, y] = indexToCoord(tileIndex, layer.width, map.tileheight, map.tilewidth)
+                    // const [sx, sy] = indexToCoord(tile - tileset.firstgid, tileset.columns, tileset.tileheight, tileset.tilewidth)
+                    // const [x, y] = indexToCoord(tileIndex, layer.width, map.tileheight, map.tilewidth)
 
-                        draw(tileset.img, sx, sy, tileset.tileheight, tileset.tilewidth, x, y, map.tileheight, map.tilewidth)
-                    }
+                }
 
-                })
             })
+
         },
         drawPlayerHealth(img, { health, maxHealth }) {
-
-
             for (let i = 0; i < maxHealth; i++) {
-
-                ctx.drawImage(img, 0, (i < health ? 0 : 8), 8, 8, i * 16, 0, 16, 16)
+                ctx.drawImage(img, (i < health ? 0 : 8), 0, 8, 8, i * 16, 268, 16, 16)
             }
-        }
+        },
+
     }
 }
 

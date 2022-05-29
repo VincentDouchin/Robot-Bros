@@ -1,7 +1,7 @@
-const Controller = (left, right, up, down) => {
+const Controller = (keysObject) => {
     function isKeyOfController(key) {
 
-        return [left, right, up, down].includes(key)
+        return Object.values(keysObject).includes(key)
     }
     const Input = function () {
         return {
@@ -13,7 +13,10 @@ const Controller = (left, right, up, down) => {
             }
         }
     }
-    const keys = { [left]: Input(), [right]: Input(), [up]: Input(), [down]: Input() }
+    // const keys = { [left]: Input(), [right]: Input(), [up]: Input(), [down]: Input() }
+    const keys = Object.values(keysObject).reduce((acc, v) => {
+        return { ...acc, [v]: Input() }
+    }, {})
     const keyDownUp = (e) => {
         const state = e.type == 'keydown'
         e.preventDefault()
@@ -23,14 +26,16 @@ const Controller = (left, right, up, down) => {
     document.addEventListener('keydown', keyDownUp)
     document.addEventListener('keyup', keyDownUp)
 
-
+    const getKeyName = key => Object.entries(keysObject).find(x => x[0] == key)[1]
 
     return {
-        left: () => keys[left].active,
-        right: () => keys[right].active,
-        up: () => keys[up].active,
-        down: () => keys[down].active,
-        setUp: state => keys[up].active = state
+        // left: () => keys[left].active,
+        // right: () => keys[right].active,
+        // up: () => keys[up].active,
+        // down: () => keys[down].active,
+        // setUp: state => keys[up].active = state,
+        get: key => keys[getKeyName(key)].active,
+        set: (key, state) => keys[getKeyName(key)].active = state
 
     }
 }

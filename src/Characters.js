@@ -2,7 +2,7 @@ import { fetchAsset } from './tools'
 import { Rectangle } from './Rectangle'
 import Display from './Display'
 const gravity = 1.2
-const friction = 0.8
+const friction = 0.85
 
 const CharacterTileSet = async function (tileset) {
 	const tiles = await Promise.all(tileset.tiles.map(async tile => {
@@ -60,20 +60,6 @@ const Entity = ({ tiles, x, y, reversed = false, moveForce = 0.5, id }) => {
 
 		id: id,
 
-		render(ctx) {
-			const sprite = this.tiles[this.state] ?? this.tiles.idle
-
-			sprite.animate()
-			const img = sprite.getFrame()
-			if ((this.direction == 1) != this.reversed) {
-				ctx.drawImage(...img, Math.floor(this.x), Math.floor(this.y), this.width, this.height)
-			}
-			if ((this.direction == -1) != this.reversed) {
-				ctx.scale(-1, 1)
-				ctx.drawImage(...img, -Math.floor(this.x + this.width), Math.floor(this.y), this.width, this.height)
-				ctx.scale(-1, 1)
-			}
-		},
 		moveLeft() {
 			this.velocity.x -= this.moveForce
 		},

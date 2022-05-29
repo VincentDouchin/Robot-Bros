@@ -8,8 +8,8 @@
  "margin":0,
  "name":"Characters",
  "spacing":0,
- "tilecount":24,
- "tiledversion":"1.8.5",
+ "tilecount":27,
+ "tiledversion":"1.7.0",
  "tileheight":16,
  "tiles":[
         {
@@ -389,8 +389,27 @@
          "imageheight":8,
          "imagewidth":16,
          "type":"health"
+        }, 
+        {
+         "id":24,
+         "image":"..\/images\/Sprite Pack 4\/1 - Agent_Mike_Bullet (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":16,
+         "type":"bullet"
+        }, 
+        {
+         "id":25,
+         "image":"..\/images\/Mini FX, Items & UI\/Common Pick-ups\/Coin (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":64
+        }, 
+        {
+         "id":26,
+         "image":"..\/images\/Mini FX, Items & UI\/Effects\/Yellow_Sparkle (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":80
         }],
  "tilewidth":128,
  "type":"tileset",
- "version":"1.8"
+ "version":"1.6"
 }
