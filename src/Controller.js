@@ -37,6 +37,7 @@ const Controller = (keysObject) => {
         get: key => keys[getKeyName(key)].active,
         set: (key, state) => keys[getKeyName(key)].active = state
 
+
     }
 }
 

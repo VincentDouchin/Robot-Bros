@@ -102,6 +102,7 @@ const Display = function (height, scale = 1) {
             draw(bullet.img, 0, 0, bullet.width, bullet.height, bullet.x, bullet.y, bullet.width, bullet.height)
         },
         drawItem(item) {
+
             item.img.animate()
             const sprite = item.img.getFrame()
             this.drawFrame(sprite, [item.x, item.y])

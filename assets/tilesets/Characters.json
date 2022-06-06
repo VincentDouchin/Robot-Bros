@@ -8,7 +8,7 @@
  "margin":0,
  "name":"Characters",
  "spacing":0,
- "tilecount":35,
+ "tilecount":33,
  "tiledversion":"1.8.5",
  "tileheight":16,
  "tiles":[
@@ -208,7 +208,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"protected"
+                 "value":"hurt"
                 }, 
                 {
                  "name":"character",
@@ -491,19 +491,6 @@
          "imageheight":16,
          "imagewidth":64,
          "type":"heart"
-        }, 
-        {
-         "id":33,
-         "image":"..\/images\/Mini FX, Items & UI\/Mini UI\/Timer_Coin_Numbers_Drop-shadowed (8 x 8).png",
-         "imageheight":16,
-         "imagewidth":56
-        }, 
-        {
-         "id":34,
-         "image":"..\/images\/Mini FX, Items & UI\/Mini UI\/Timer_Coin_Numbers_Outlined (8 x 8).png",
-         "imageheight":16,
-         "imagewidth":56,
-         "type":"points"
         }],
  "tilewidth":128,
  "type":"tileset",

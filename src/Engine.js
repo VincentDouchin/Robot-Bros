@@ -1,17 +1,23 @@
 const Engine = function () {
-    let running = false
     let state
+    let states
     const cycle = () => {
         window.requestAnimationFrame(cycle)
         state.update()
         state.render()
+        setState(state.changeState())
+
+    }
+    const setState = (_state) => {
+        if (!_state) return
+        state = states[_state]
     }
     return {
-        setState(stateToSet) {
-            state = stateToSet
+        setState,
+        setStates(_states) {
+            states = _states
         },
         start() {
-            running = true
             cycle()
         },
         stop() {

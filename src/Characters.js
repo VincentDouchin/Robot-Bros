@@ -39,7 +39,7 @@ const Animator = function (img, delay = 20) {
 			if (this.counter >= this.delay) {
 				this.selectedFrame = (this.selectedFrame + 1) % this.framesNb
 				this.counter = 0
-				this.cycle++
+				this.cycles++
 			}
 		}
 	}

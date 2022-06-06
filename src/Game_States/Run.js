@@ -5,12 +5,11 @@ import pointsTileSet from './../../assets/tilesets/Points.json'
 import { TiledMap, getTileset } from './../../src/TiledMap'
 import Display from './../../src/Display'
 import { Entity, CharacterTileSet, Animator } from './../../src/Characters'
-import { Controller } from './../../src/Controller'
 import { isColliding, collide } from './../../src/collider'
 import { Bullet } from '../Bullet'
 import { Rectangle } from '../Rectangle'
-
-const Run = async function () {
+import { Item } from '../Items'
+const Run = async function (controller) {
 
     const characterTiles = await CharacterTileSet(characterTileset)
     const ant = characterTiles.getCharacter('Ant')
@@ -22,13 +21,14 @@ const Run = async function () {
     const health = characterTiles.getType('health').img
     const dust = characterTiles.getType('dust').img
     const bulletImg = characterTiles.getType('bullet').img
-    const smallCoin = Animator(characterTiles.getType('small coin').img)
-    const bigCoin = Animator(characterTiles.getType('big coin').img)
-    const heart = Animator(characterTiles.getType('heart').img)
+    const smallCoin = characterTiles.getType('small coin').img
+    const bigCoin = characterTiles.getType('big coin').img
+    const heart = characterTiles.getType('heart').img
     const points = await getTileset(pointsTileSet)
 
     const display = Display(288)
-    const items = [{ type: 'coin', amount: 5, img: smallCoin }, { type: 'coin', amount: 10, img: bigCoin }, { type: 'heart', img: heart }]
+
+    const items = [Item(bigCoin, 'coin', { amount: 10 }), Item(smallCoin, 'coin', { amount: 5 }), Item(heart, 'heart',)]
     const playerTiles = [ant, binny]
     let selectedPlayer = 0
     const cave = await TiledMap(caveMap)
@@ -39,7 +39,6 @@ const Run = async function () {
     player.dust = Animator(dust, 4)
     player.bullets = []
 
-    const controller = Controller({ left: 'q', right: 'd', up: ' ', shoot: 'z', change: 'p', shoot: 'z' })
     const enemyList = [[bumpy, true], [devo, true], [bushly, false]]
     const enemies = []
 
@@ -86,6 +85,15 @@ const Run = async function () {
                 player.jump()
                 controller.set('up', false)
             }
+            if (controller.get('change')) {
+                controller.set('change', false)
+                selectedPlayer++
+                player.tiles = playerTiles[selectedPlayer % playerTiles.length]
+            }
+            if (controller.get('shoot')) {
+                controller.set('shoot', false)
+                player.bullets.push(Bullet(player, bulletImg))
+            }
         }
     }
 
@@ -123,18 +131,16 @@ const Run = async function () {
                 enemySpawnedTimeStamp = 0
                 spawnEnemy(cave)
             }
-            if (controller.get('change')) {
-                controller.set('change', false)
-                selectedPlayer++
-                player.tiles = playerTiles[selectedPlayer % playerTiles.length]
-            }
-            if (controller.get('shoot')) {
-                controller.set('shoot', false)
-                player.bullets.push(Bullet(player, bulletImg))
-            }
+
 
             if (!enemies.some(enemy => isColliding(enemy, player))) {
                 player.lastEnemyHit = null
+            }
+            if (player.state == 'hurt') {
+                if (player.tiles.hurt.cycles >= 3) {
+                    player.tiles.hurt.cycles = 0
+                    player.state = 'idle'
+                }
             }
             cave.items.forEach((item, itemIndex) => {
                 if (isColliding(item, player)) {
@@ -145,8 +151,11 @@ const Run = async function () {
                     if (item.type == 'heart' && player.health < player.maxHealth) {
                         player.health++
                     }
+
                     cave.items.splice(itemIndex, 1)
                 }
+                item.img.delay = 20 - item.img.cycles
+                if (item.img.delay <= -10) cave.items.splice(itemIndex, 1)
             })
             enemies.forEach((enemy, enemyIndex) => {
 
@@ -178,13 +187,15 @@ const Run = async function () {
                         enemies.splice(enemyIndex, 1)
                         const itemToAdd = items[Math.floor(Math.random() * items.length)]
                         const { x, y } = cave.getSpawnPoint('item')
-                        cave.items.push({ ...itemToAdd, ...Rectangle(x, y, 16, 16) })
+
+                        cave.items.push({ ...itemToAdd(), ...Rectangle(x, y, 16, 16) })
                         return
                     }
                 }
 
             })
             player.bullets.forEach(bullet => bullet.update())
+
 
             // const blockHitsTop = blockHits.filter(x => x.getTop() < player.getTop())
             // blockHitsTop.forEach(x => x.setTop(x.getTop() - 8))
@@ -193,6 +204,13 @@ const Run = async function () {
 
 
             movePlayer()
+        },
+        changeState() {
+            if (controller.get('pause')) {
+                controller.set('pause', false)
+                return 'pause'
+            }
+            return false
         }
     }
 }
