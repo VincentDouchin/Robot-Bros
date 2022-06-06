@@ -1,6 +1,5 @@
 import { fetchAsset } from './tools'
 import { Rectangle } from './Rectangle'
-import Display from './Display'
 const gravity = 1.2
 const friction = 0.85
 
@@ -30,15 +29,17 @@ const Animator = function (img, delay = 20) {
 		counter: 0,
 		framesNb: img.width / img.height,
 		selectedFrame: 0,
-
+		delay,
+		cycles: 0,
 		getFrame() {
 			return [img, this.selectedFrame * img.height, 0, img.height, img.height]
 		},
 		animate() {
 			this.counter++
-			if (this.counter >= delay) {
+			if (this.counter >= this.delay) {
 				this.selectedFrame = (this.selectedFrame + 1) % this.framesNb
 				this.counter = 0
+				this.cycle++
 			}
 		}
 	}

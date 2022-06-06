@@ -1,4 +1,6 @@
 
+import { indexToCoord } from "./tools"
+
 const initializeCtx = height => {
     // const canvas = document.createElement('canvas')
     // const ctx = canvas.getContext('2d', { alpha: true })
@@ -44,10 +46,7 @@ const Display = function (height, scale = 1) {
         draw(img, sx, sy, sw, sh, -Math.floor(x + w), Math.floor(y), w, h)
         ctx.scale(-1, 1)
     }
-    const indexToCoord = (index, columns, width, height) => {
-        height = height ?? width
-        return [index % columns * width, Math.floor(index / columns) * height]
-    }
+
     const mapBuffers = []
     return {
         ctx,
@@ -69,22 +68,17 @@ const Display = function (height, scale = 1) {
         },
         drawMap() {
             mapBuffers.forEach(buffer => ctx.drawImage(buffer.canvas, 0, 0))
+            ctx.drawImage(mapBuffers[0].canvas, 0, 0)
+            ctx.drawImage(mapBuffers[1].canvas, 0, 0)
         },
         createMapBuffer(map, buffer) {
             if (!mapBuffers[buffer]) mapBuffers[buffer] = createBuffer(height * scale)
             const layer = map.layers[buffer]
 
             layer.forEach((tile) => {
-
                 if (tile) {
-                    mapBuffers[buffer].drawImage(tile.img, tile.sx, tile.sy, tile.sh, tile.sw, tile.x, tile.y, tile.h, tile.w)
-                    // const tileset = map.tilesets.find(x => tile >= x.firstgid && tile <= x.firstgid + x.tilecount)
-
-                    // const [sx, sy] = indexToCoord(tile - tileset.firstgid, tileset.columns, tileset.tileheight, tileset.tilewidth)
-                    // const [x, y] = indexToCoord(tileIndex, layer.width, map.tileheight, map.tilewidth)
-
+                    mapBuffers[buffer].drawImage(tile.img, tile.sx, tile.sy, tile.sh, tile.sw, tile.x, tile.y, tile.height, tile.width)
                 }
-
             })
 
         },
@@ -93,6 +87,25 @@ const Display = function (height, scale = 1) {
                 ctx.drawImage(img, (i < health ? 0 : 8), 0, 8, 8, i * 16, 268, 16, 16)
             }
         },
+        drawPlayerPoints(tileset, { points = 0 }) {
+            const getCoord = tile => indexToCoord(tileset.tiles.find(x => x.type == tile).id, tileset.columns, tileset.tilewidth, tileset.tileheight)
+            const coin = getCoord('coin')
+            const pointsString = points.toString()
+            const fullPointsString = new Array(6 - pointsString.length).fill(0).join('') + pointsString
+            for (let i = 0; i < fullPointsString.length; i++) {
+                draw(tileset.img, ...getCoord(fullPointsString[i]), tileset.tilewidth, tileset.tileheight, (25 + i) * 16, 268, 16, 16)
+
+            }
+            draw(tileset.img, ...coin, tileset.tilewidth, tileset.tileheight, 25 * 16, 268, 16, 16)
+        },
+        drawBullet(bullet) {
+            draw(bullet.img, 0, 0, bullet.width, bullet.height, bullet.x, bullet.y, bullet.width, bullet.height)
+        },
+        drawItem(item) {
+            item.img.animate()
+            const sprite = item.img.getFrame()
+            this.drawFrame(sprite, [item.x, item.y])
+        }
 
     }
 }

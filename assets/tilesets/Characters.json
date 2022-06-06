@@ -8,8 +8,8 @@
  "margin":0,
  "name":"Characters",
  "spacing":0,
- "tilecount":27,
- "tiledversion":"1.7.0",
+ "tilecount":35,
+ "tiledversion":"1.8.5",
  "tileheight":16,
  "tiles":[
         {
@@ -401,15 +401,111 @@
          "id":25,
          "image":"..\/images\/Mini FX, Items & UI\/Common Pick-ups\/Coin (16 x 16).png",
          "imageheight":16,
-         "imagewidth":64
+         "imagewidth":64,
+         "type":"big coin"
         }, 
         {
          "id":26,
          "image":"..\/images\/Mini FX, Items & UI\/Effects\/Yellow_Sparkle (16 x 16).png",
          "imageheight":16,
          "imagewidth":80
+        }, 
+        {
+         "id":27,
+         "image":"..\/images\/Sprite Pack 1\/4 - Bushly\/Hurt (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":16,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"hurt"
+                }, 
+                {
+                 "name":"character",
+                 "type":"string",
+                 "value":"Bushly"
+                }]
+        }, 
+        {
+         "id":28,
+         "image":"..\/images\/Sprite Pack 1\/4 - Bushly\/Idle (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":48,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"idle"
+                }, 
+                {
+                 "name":"character",
+                 "type":"string",
+                 "value":"Bushly"
+                }]
+        }, 
+        {
+         "id":29,
+         "image":"..\/images\/Sprite Pack 1\/4 - Bushly\/Jumping (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":16,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"jump"
+                }, 
+                {
+                 "name":"character",
+                 "type":"string",
+                 "value":"Bushly"
+                }]
+        }, 
+        {
+         "id":30,
+         "image":"..\/images\/Sprite Pack 1\/4 - Bushly\/Running (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":96,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"moving"
+                }, 
+                {
+                 "name":"character",
+                 "type":"string",
+                 "value":"Bushly"
+                }]
+        }, 
+        {
+         "id":31,
+         "image":"..\/images\/Mini FX, Items & UI\/Common Pick-ups\/Small_Coin (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":64,
+         "type":"small coin"
+        }, 
+        {
+         "id":32,
+         "image":"..\/images\/Mini FX, Items & UI\/Common Pick-ups\/Heart_Spin (16 x 16).png",
+         "imageheight":16,
+         "imagewidth":64,
+         "type":"heart"
+        }, 
+        {
+         "id":33,
+         "image":"..\/images\/Mini FX, Items & UI\/Mini UI\/Timer_Coin_Numbers_Drop-shadowed (8 x 8).png",
+         "imageheight":16,
+         "imagewidth":56
+        }, 
+        {
+         "id":34,
+         "image":"..\/images\/Mini FX, Items & UI\/Mini UI\/Timer_Coin_Numbers_Outlined (8 x 8).png",
+         "imageheight":16,
+         "imagewidth":56,
+         "type":"points"
         }],
  "tilewidth":128,
  "type":"tileset",
- "version":"1.6"
+ "version":"1.8"
 }

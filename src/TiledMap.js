@@ -3,49 +3,44 @@ import { fetchAsset, indexToCoord } from './tools'
 
 import { isColliding, collideBlock } from './collider'
 
+const getTileset = async function (tileset) {
+	if (tileset.source) Object.assign(tileset, { ... await fetchAsset(tileset.source) })
+	if (tileset.image) Object.assign(tileset, { img: await fetchAsset(tileset.image, 'img') })
 
+	return tileset
+}
 const TiledMap = async function (map) {
-	const getMapTileSet = async function (tileset) {
-		const source = await fetchAsset(tileset.source)
-		const img = await fetchAsset(source.image, 'img')
-		return { ...tileset, ...source, img }
-	}
-	const tilesets = await Promise.all(map.tilesets.map(getMapTileSet))
+
+
+	const tilesets = await Promise.all(map.tilesets.map(getTileset))
 	const getCorrespondingTileset = tileNb => tilesets.find(x => tileNb >= x.firstgid && tileNb <= x.tilecount)
-	const indexToCoord = (index, columns, width, height) => {
-		height = height ?? width
-		return [index % columns * width, Math.floor(index / columns) * height]
-	}
-	const layers = map.layers.map(layer => {
+
+	const objects = map.layers.find(x => x.type == 'objectgroup').objects.map(x => ({ ...x, ...x.properties?.reduce((acc, v) => ({ ...acc, [v.name]: v.value }), {}) }))
+	map.layers = map.layers.filter(x => x.type == 'tilelayer').map(layer => {
 		return layer.data.map((tile, tileIndex) => {
 			if (tile) {
 				const tileset = getCorrespondingTileset(tile)
 				const [sx, sy] = indexToCoord(tile - tileset.firstgid, tileset.columns, tileset.tileheight, tileset.tilewidth)
 				const [x, y] = indexToCoord(tileIndex, layer.width, map.tileheight, map.tilewidth)
-				return { img: tileset.img, sx, sy, sh: tileset.tileheight, sw: tileset.tilewidth, ...Rectangle(x, y, map.tileheight, map.tilewidth) }
+				const type = tileset.tiles.find(x => x.id == (tile - tileset.firstgid))?.type
+				// debugger
+				return { type, img: tileset.img, sx, sy, sh: tileset.tileheight, sw: tileset.tilewidth, ...Rectangle(x, y, map.tileheight, map.tilewidth) }
 			}
 		})
 	})
-	debugger
 	const collisionMap = map.layers.flatMap(layer => {
-		return layer.data.reduce((acc, v, i) => {
-			if (!v) return acc
-			const tileset = getCorrespondingTileset(v)
-			const tile = tileset?.tiles.find(x => x.id == v - tileset.firstgid)
-			if (!tile || !tile?.type) return acc
-			const [x, y] = indexToCoord(i, layer.width, 16, 16)
-			return [...acc, { type: tile.type, ...Rectangle(x, y, 16, 16) }]
-		}, [])
+		return layer.filter(x => x?.type)
+
 	})
-
-
+	let lastSpawn = {}
 	return {
 		left: 0,
+
 		right: map.tilewidth * map.width,
 		top: 0,
 		bottom: map.tileheight * map.height,
+		items: [],
 		...map,
-		layers,
 		tilesets,
 		collideWithEntity(entity) {
 			if (this.left >= entity.getLeft()) entity.setLeft(this.left)
@@ -54,10 +49,16 @@ const TiledMap = async function (map) {
 			if (this.bottom <= entity.getBottom()) entity.setBottom(this.bottom)
 			return collisionMap.filter(x => isColliding(entity, x)).filter(x => collideBlock(entity, x))
 		},
+		getSpawnPoint(type) {
+			const possibleSpawns = objects.filter(x => x.spanwPoint == type && x.id != lastSpawn?.[type])
+			const { x, y, id } = possibleSpawns[Math.floor(Math.random() * possibleSpawns.length)]
+			lastSpawn[type] = id
+			return { x, y }
+		}
 
 	}
 }
 
 
 
-export { TiledMap }
+export { TiledMap, getTileset }
