@@ -1,7 +1,6 @@
 
-import { Controller } from "./../Controller"
+
 const Pause = function (display, controller) {
-    // const controller = Controller({ pause: 'p' })
     return {
         render() {
 
@@ -10,7 +9,8 @@ const Pause = function (display, controller) {
 
         },
         changeState() {
-            if (controller.pause.once) {
+            if (controller.get('pause')) {
+                controller.set('pause', false)
                 return 'run'
             }
         }

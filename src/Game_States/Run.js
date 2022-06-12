@@ -3,14 +3,14 @@ import characterTileset from './../../assets/tilesets/Characters.json'
 import pointsTileSet from './../../assets/tilesets/Points.json'
 
 import { TiledMap, getTileset } from './../../src/TiledMap'
-import Display from './../../src/Display'
 import { Entity, CharacterTileSet, Animator } from './../../src/Characters'
 import { isColliding, collide } from './../../src/collider'
 import { Bullet } from '../Bullet'
 import { Rectangle } from '../Rectangle'
 import { Item } from '../Items'
-const Run = async function (controller) {
+const Run = async function (display, controller) {
 
+    // const controller = Controller({ left: 'q', right: 'd', up: ' ', shoot: 'z', change: 'c', pause: 'p', shoot: 'z', down: 's' })
     const characterTiles = await CharacterTileSet(characterTileset)
     const ant = characterTiles.getCharacter('Ant')
     const binny = characterTiles.getCharacter('Binny')
@@ -26,14 +26,14 @@ const Run = async function (controller) {
     const heart = characterTiles.getType('heart').img
     const points = await getTileset(pointsTileSet)
 
-    const display = Display(288)
+
 
     const items = [Item(bigCoin, 'coin', { amount: 10 }), Item(smallCoin, 'coin', { amount: 5 }), Item(heart, 'heart',)]
     const playerTiles = [ant, binny]
     let selectedPlayer = 0
     const cave = await TiledMap(caveMap)
     const player = Entity({ tiles: ant, x: 32, y: 15 * 16 })
-    player.points = 10
+    player.points = 0
     player.health = 3
     player.maxHealth = 5
     player.dust = Animator(dust, 4)
@@ -75,45 +75,43 @@ const Run = async function (controller) {
 
             player.update()
             cave.collideWithEntity(player)
-            if (controller.get('left')) {
+            if (controller.left.active) {
                 player.moveLeft()
             }
-            if (controller.get('right')) {
+            if (controller.right.active) {
                 player.moveRight()
             }
-            if (controller.get('up')) {
+            if (controller.jump.once) {
                 player.jump()
-                controller.set('up', false)
             }
-            if (controller.get('change')) {
-                controller.set('change', false)
-                selectedPlayer++
-                player.tiles = playerTiles[selectedPlayer % playerTiles.length]
-            }
-            if (controller.get('shoot')) {
-                controller.set('shoot', false)
+            // if (controller.get('change')) {
+            //     controller.set('change', false)
+            //     selectedPlayer++
+            //     player.tiles = playerTiles[selectedPlayer % playerTiles.length]
+            // }
+            if (controller.shoot.once) {
                 player.bullets.push(Bullet(player, bulletImg))
             }
         }
     }
 
     display.createMapBuffer(cave, 0)
+    display.createMapBuffer(cave, 1)
     return {
         render() {
-            display.createMapBuffer(cave, 1)
-            display.drawMap()
+            display.drawMap(cave)
             enemies.forEach((enemy, enemyIndex) => {
                 display.drawEntity(enemy)
                 if (enemy?.explosion) {
                     enemy.explosion.animate()
 
-                    display.drawFrame(enemy.explosion.getFrame(), [enemy.x, enemy.y])
+                    display.drawFrame(enemy.explosion.getFrame(), [enemy.x, enemy.y, 16, 16])
                 }
             })
             display.drawEntity(player)
             if (player.state == 'moving') {
                 player.dust.animate()
-                display.drawFrame(player.dust.getFrame(), [player.x - (player.direction * player.width), player.y], player.direction)
+                display.drawFrame(player.dust.getFrame(), [player.x - (player.direction * player.width), player.y, 16, 16], player.direction)
 
             }
             if (player.state == 'idle') {
@@ -206,8 +204,7 @@ const Run = async function (controller) {
             movePlayer()
         },
         changeState() {
-            if (controller.get('pause')) {
-                controller.set('pause', false)
+            if (controller.pause.once) {
                 return 'pause'
             }
             return false

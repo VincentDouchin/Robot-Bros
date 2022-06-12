@@ -40,7 +40,7 @@ const createBuffer = height => {
 }
 const Display = function (height, scale = 1) {
     const ctx = initializeCtx(height * scale)
-    const draw = (img, sx, sy, sw, sh, x, y, w, h) => ctx.drawImage(img, sx, sy, sw, sh, x * scale, y * scale, w * scale, h * scale)
+    const draw = (img, sx, sy, sw, sh, x, y, w, h, factor = 1) => ctx.drawImage(img, sx, sy, sw, sh, x * scale, y * scale, w * scale * factor, h * scale * factor)
     const drawFlipped = (img, sx, sy, sw, sh, x, y, w, h) => {
         ctx.scale(-1, 1)
         draw(img, sx, sy, sw, sh, -Math.floor(x + w), Math.floor(y), w, h)
@@ -50,11 +50,17 @@ const Display = function (height, scale = 1) {
     const mapBuffers = []
     return {
         ctx,
+        draw,
+
+        drawCentered(frame1, frame2, factor) {
+
+            draw(frame1, 0, 0, frame1.width, frame1.height, frame2.x + frame2.width / 2 - frame1.width * factor / 2, frame2.y + frame2.height / 2 - frame1.height * factor / 2, frame1.width * factor, frame1.height * factor)
+        },
         drawFrame(frame, pos, direction = 1) {
             if (direction === 1) {
-                draw(...frame, ...pos, 16, 16)
+                draw(...frame, ...pos)
             } else {
-                drawFlipped(...frame, ...pos, 16, 16)
+                drawFlipped(...frame, ...pos)
 
             }
         },
@@ -63,21 +69,21 @@ const Display = function (height, scale = 1) {
 
             sprite.animate()
             const img = sprite.getFrame()
-            this.drawFrame(img, [entity.x, entity.y], entity.direction * (entity.reversed ? -1 : 1))
+            this.drawFrame(img, [entity.x, entity.y, 16, 16], entity.direction * (entity.reversed ? -1 : 1))
 
         },
-        drawMap() {
-            mapBuffers.forEach(buffer => ctx.drawImage(buffer.canvas, 0, 0))
-            ctx.drawImage(mapBuffers[0].canvas, 0, 0)
-            ctx.drawImage(mapBuffers[1].canvas, 0, 0)
+        drawMap(map) {
+            map?.buffers.forEach(buffer => ctx.drawImage(buffer.canvas, 0, 0))
         },
         createMapBuffer(map, buffer) {
-            if (!mapBuffers[buffer]) mapBuffers[buffer] = createBuffer(height * scale)
+
+            if (!map?.buffers) map.buffers = []
+            if (!map.buffers?.[buffer]) map.buffers[buffer] = createBuffer(height * scale)
             const layer = map.layers[buffer]
 
             layer.forEach((tile) => {
                 if (tile) {
-                    mapBuffers[buffer].drawImage(tile.img, tile.sx, tile.sy, tile.sh, tile.sw, tile.x, tile.y, tile.height, tile.width)
+                    map.buffers[buffer].drawImage(tile.img, tile.sx, tile.sy, tile.sh, tile.sw, tile.x, tile.y, tile.height, tile.width)
                 }
             })
 
@@ -105,7 +111,7 @@ const Display = function (height, scale = 1) {
 
             item.img.animate()
             const sprite = item.img.getFrame()
-            this.drawFrame(sprite, [item.x, item.y])
+            this.drawFrame(sprite, [item.x, item.y, 16, 16])
         }
 
     }

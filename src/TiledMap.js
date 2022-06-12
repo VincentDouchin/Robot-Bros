@@ -13,7 +13,7 @@ const TiledMap = async function (map) {
 
 
 	const tilesets = await Promise.all(map.tilesets.map(getTileset))
-	const getCorrespondingTileset = tileNb => tilesets.find(x => tileNb >= x.firstgid && tileNb <= x.tilecount)
+	const getCorrespondingTileset = tileNb => tilesets.find(x => tileNb >= x.firstgid && tileNb <= x.firstgid + x.tilecount)
 
 	const objects = map.layers.find(x => x.type == 'objectgroup').objects.map(x => ({ ...x, ...x.properties?.reduce((acc, v) => ({ ...acc, [v.name]: v.value }), {}) }))
 	map.layers = map.layers.filter(x => x.type == 'tilelayer').map(layer => {
@@ -35,12 +35,12 @@ const TiledMap = async function (map) {
 	let lastSpawn = {}
 	return {
 		left: 0,
-
 		right: map.tilewidth * map.width,
 		top: 0,
 		bottom: map.tileheight * map.height,
 		items: [],
 		...map,
+		objects,
 		tilesets,
 		collideWithEntity(entity) {
 			if (this.left >= entity.getLeft()) entity.setLeft(this.left)
