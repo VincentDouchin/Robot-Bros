@@ -98,6 +98,9 @@ const Run = async function (display, controller) {
     display.createMapBuffer(cave, 0)
     display.createMapBuffer(cave, 1)
     return {
+        set() {
+
+        },
         render() {
             display.drawMap(cave)
             enemies.forEach((enemy, enemyIndex) => {
@@ -205,7 +208,7 @@ const Run = async function (display, controller) {
         },
         changeState() {
             if (controller.pause.once) {
-                return 'pause'
+                return ['pause']
             }
             return false
         }

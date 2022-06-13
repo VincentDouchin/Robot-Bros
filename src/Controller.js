@@ -2,7 +2,18 @@ const Controller = async (keysObject) => {
     const layout = await navigator.keyboard.getLayoutMap()
     const azerty = layout.get('KeyA') == 'a'
     let gamepadSupport = false
+    let gamepadInterval
     let touchSupport = navigator.userAgentData.mobile
+    const buttons = {
+        up: [12],
+        down: [13],
+        left: [14],
+        right: [15],
+        enter: [0],
+        pause: [9],
+        jump: [0],
+        shoot: [2],
+    }
     const keys = {
         up: [(azerty ? 'KeyZ' : 'KeyW'), 'ArrowUp'],
         down: ['KeyS', 'ArrowDown'],
@@ -18,9 +29,18 @@ const Controller = async (keysObject) => {
     window.addEventListener("gamepadconnected", x => {
         console.log('gamepad deteted')
         gamepadSupport = true
+        gamepadInterval = setInterval(() => {
+            navigator.getGamepads()[0].buttons.forEach(({ pressed }, buttonIndex) => {
+
+                Object.entries(buttons).filter(([button, nb]) => nb.includes(buttonIndex)).forEach(([button, nb]) => {
+                    inputs[button]?.getInput(pressed)
+                })
+            })
+        }, 10)
     })
     window.addEventListener("gamepaddisconnected", x => {
         gamepadSupport = false
+        gamepad = null
     })
 
     const Input = function () {
@@ -58,7 +78,7 @@ const Controller = async (keysObject) => {
     const getKeyName = key => Object.entries(keysObject).find(x => x[0] == key)[1]
 
     return {
-        get inputs() {
+        inputs() {
             const inputs = touchSupport ? ['touch'] : ['keyboard']
             if (gamepadSupport) {
                 inputs.push('controller')

@@ -8,7 +8,7 @@
  "margin":0,
  "name":"UI",
  "spacing":0,
- "tilecount":10,
+ "tilecount":13,
  "tiledversion":"1.8.5",
  "tileheight":44,
  "tiles":[
@@ -81,8 +81,29 @@
          "imageheight":8,
          "imagewidth":18,
          "type":"binny"
+        }, 
+        {
+         "id":17,
+         "image":"..\/images\/ui\/dpad.png",
+         "imageheight":26,
+         "imagewidth":130,
+         "type":"dpad"
+        }, 
+        {
+         "id":18,
+         "image":"..\/images\/ui\/buttonB.png",
+         "imageheight":16,
+         "imagewidth":64,
+         "type":"b"
+        }, 
+        {
+         "id":19,
+         "image":"..\/images\/ui\/buttonA.png",
+         "imageheight":16,
+         "imagewidth":64,
+         "type":"a"
         }],
- "tilewidth":96,
+ "tilewidth":130,
  "type":"tileset",
  "version":"1.8"
 }

@@ -8,13 +8,12 @@ import Display from './src/Display'
 import { Controller } from './src/Controller'
 (async function () {
 	const controller = await Controller()
-	const engine = new Engine()
-
+	document.addEventListener('keydown', () => console.log(controller.inputs()))
 	const display = Display(288)
 	const run = await Run(display, controller)
 	const pause = Pause(display, controller)
 	const title = await Title(display, controller)
-	engine.setStates({ run, pause, title })
-	engine.setState('title')
+	const engine = new Engine({ run, pause, title })
+	engine.setState(['title'])
 	engine.start()
 })()

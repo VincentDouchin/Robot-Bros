@@ -2,6 +2,9 @@
 
 const Pause = function (display, controller) {
     return {
+        set() {
+
+        },
         render() {
 
         },
@@ -11,7 +14,7 @@ const Pause = function (display, controller) {
         changeState() {
             if (controller.get('pause')) {
                 controller.set('pause', false)
-                return 'run'
+                return ['run']
             }
         }
     }

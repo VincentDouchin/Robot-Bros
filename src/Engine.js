@@ -1,6 +1,5 @@
-const Engine = function () {
+const Engine = function (states) {
     let state
-    let states
     const cycle = () => {
         window.requestAnimationFrame(cycle)
         state.update()
@@ -10,7 +9,8 @@ const Engine = function () {
     }
     const setState = (_state) => {
         if (!_state) return
-        state = states[_state]
+        state = states[_state[0]]
+        state.set(_state[1])
     }
     return {
         setState,

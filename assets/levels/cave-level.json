@@ -5,7 +5,7 @@
         {
          "draworder":"topdown",
          "id":8,
-         "name":"objects",
+         "name":"positions",
          "objects":[
                 {
                  "height":16,
@@ -230,6 +230,85 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":9,
+         "name":"ui",
+         "objects":[
+                {
+                 "height":64,
+                 "id":25,
+                 "name":"left",
+                 "properties":[
+                        {
+                         "name":"image",
+                         "type":"file",
+                         "value":"..\/images\/ui\/arrow.png"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":16,
+                 "y":208
+                }, 
+                {
+                 "height":64,
+                 "id":26,
+                 "name":"b",
+                 "properties":[
+                        {
+                         "name":"image",
+                         "type":"file",
+                         "value":"..\/images\/ui\/button_touch.png"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":352,
+                 "y":208
+                }, 
+                {
+                 "height":64,
+                 "id":32,
+                 "name":"right",
+                 "properties":[
+                        {
+                         "name":"image",
+                         "type":"file",
+                         "value":"..\/images\/ui\/arrow.png"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":96,
+                 "y":208
+                }, 
+                {
+                 "height":64,
+                 "id":33,
+                 "name":"a",
+                 "properties":[
+                        {
+                         "name":"image",
+                         "type":"file",
+                         "value":"..\/images\/ui\/button_touch.png"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":432,
+                 "y":208
+                }],
+         "opacity":1,
+         "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
@@ -292,8 +371,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":9,
- "nextobjectid":19,
+ "nextlayerid":10,
+ "nextobjectid":34,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.5",

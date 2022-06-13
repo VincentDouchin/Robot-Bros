@@ -15,8 +15,9 @@ const TiledMap = async function (map) {
 	const tilesets = await Promise.all(map.tilesets.map(getTileset))
 	const getCorrespondingTileset = tileNb => tilesets.find(x => tileNb >= x.firstgid && tileNb <= x.firstgid + x.tilecount)
 
-	const objects = map.layers.find(x => x.type == 'objectgroup').objects.map(x => ({ ...x, ...x.properties?.reduce((acc, v) => ({ ...acc, [v.name]: v.value }), {}) }))
-	map.layers = map.layers.filter(x => x.type == 'tilelayer').map(layer => {
+	const objects = map.layers.filter(x => x.type == 'objectgroup').reduce((acc, v) => ({ ...acc, [v.name]: v.objects?.map(x => ({ ...x, ...x.properties?.reduce((acc, v) => ({ ...acc, [v.name]: v.value }), {}) })) }), {})
+
+	const layers = map.layers.filter(x => x.type == 'tilelayer').map(layer => {
 		return layer.data.map((tile, tileIndex) => {
 			if (tile) {
 				const tileset = getCorrespondingTileset(tile)
@@ -28,7 +29,7 @@ const TiledMap = async function (map) {
 			}
 		})
 	})
-	const collisionMap = map.layers.flatMap(layer => {
+	const collisionMap = layers.flatMap(layer => {
 		return layer.filter(x => x?.type)
 
 	})
@@ -40,6 +41,7 @@ const TiledMap = async function (map) {
 		bottom: map.tileheight * map.height,
 		items: [],
 		...map,
+		layers,
 		objects,
 		tilesets,
 		collideWithEntity(entity) {
@@ -50,7 +52,7 @@ const TiledMap = async function (map) {
 			return collisionMap.filter(x => isColliding(entity, x)).filter(x => collideBlock(entity, x))
 		},
 		getSpawnPoint(type) {
-			const possibleSpawns = objects.filter(x => x.spanwPoint == type && x.id != lastSpawn?.[type])
+			const possibleSpawns = objects.positions.filter(x => x.spanwPoint == type && x.id != lastSpawn?.[type])
 			const { x, y, id } = possibleSpawns[Math.floor(Math.random() * possibleSpawns.length)]
 			lastSpawn[type] = id
 			return { x, y }
