@@ -1,8 +1,8 @@
 
-import TitleSRC from '../../assets/levels/Title.json'
+import TitleSRC from '../../public/levels/Title.json'
 import { TiledMap } from '../TiledMap'
 import { CharacterTileSet } from '../Characters'
-import ui from '../../assets/tilesets/UI.json'
+import ui from '../../public/tilesets/UI.json'
 
 const Title = async function (display, controller) {
     // const controller = Controller({ up: 'z', down: 's', left: 'q', right: 'd', enter: ' ' })

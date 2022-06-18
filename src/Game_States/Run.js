@@ -1,6 +1,6 @@
-import caveMap from './../../assets/levels/cave-level.json'
-import characterTileset from './../../assets/tilesets/Characters.json'
-import pointsTileSet from './../../assets/tilesets/Points.json'
+import caveMap from './../../public/levels/cave-level.json'
+import characterTileset from './../../public/tilesets/Characters.json'
+import pointsTileSet from './../../public/tilesets/Points.json'
 
 import { TiledMap, getTileset } from './../../src/TiledMap'
 import { Entity, CharacterTileSet, Animator } from './../../src/Characters'

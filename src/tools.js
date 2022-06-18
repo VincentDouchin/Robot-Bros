@@ -1,5 +1,8 @@
 const fetchAsset = async (path, type = 'json') => {
-    const res = await fetch(path.replace('../', '/assets/'))
+    debugger
+    const res = await fetch(new URL(path.replace('../', '/'), import.meta.url))
+
+    // console.log(new URL(path.replace('../', '/'), import.meta.url).href)
     const loadImage = src =>
         new Promise(async (resolve, reject) => {
             const blob = await res.blob()
