@@ -1,10 +1,10 @@
 
-import TitleSRC from '../../public/levels/Title.json'
+import TitleSRC from '../../assets/levels/Title.json'
 import { TiledMap } from '../TiledMap'
 import { CharacterTileSet } from '../Characters'
-import ui from '../../public/tilesets/UI.json'
+import ui from '../../assets/tilesets/UI.json'
 
-const Title = async function (display, controller) {
+const Title = async function (display, controller, uiManager, engine) {
     // const controller = Controller({ up: 'z', down: 's', left: 'q', right: 'd', enter: ' ' })
     const UI = await CharacterTileSet(ui)
     const buttonImg = UI.getType('default').img
@@ -26,60 +26,50 @@ const Title = async function (display, controller) {
     const options = [0, 0, 0]
     const inputOptions = { keyboard: keyboardImg, touch: touchImg, controller: controllerImg }
     const getInputOptions = () => Object.entries(inputOptions).filter(([input, img]) => controller.inputs().includes(input)).map(([input, img]) => img)
-
-    const textImgs = [[startImg], [], [antImg, binnyImg]]
+    let inputs
+    // const textImgs = [[startImg], [], [antImg, binnyImg]]
     const menuButtons = titleMap.objects.ui.filter(x => x.type == 'menu').sort((a, b) => a.order - b.order)
     const preview = titleMap.objects.ui.find(x => x.type == 'preview')
     const increment = (x, arr) => (x + 1) % arr.length
     const decrement = (x, arr) => x === 0 ? arr.length - 1 : x - 1
+
+    const buttons = [
+        { button: menuButtons.find(x => x.name == 'play'), img: buttonImg, text: startImg, click: () => engine.setState('run') },
+        { button: menuButtons.find(x => x.name == 'controller'), img: buttonImg, text: controllerImg, },
+        // ...['controller', 'character'].flatMap(name => ['left', 'right'].map(dir => {
+        //     return { button: titleMap.objects.ui.find(x => x.name == name && x.type == dir), img: arrowImg }
+        // })),
+        { button: menuButtons.find(x => x.name == 'character'), img: buttonImg, text: antImg }
+    ]
+    uiManager.setUI(buttons)
     return {
         set() {
 
         },
         render() {
             display.drawMap(titleMap)
-
-            menuButtons.forEach((button, buttonIndex) => {
-                const img = selectedButton == buttonIndex ? buttonImgSelected : buttonImg
-                display.draw(img, 0, 0, img.width, img.height, button.x, button.y, button.width, button.height)
-                const textImg = textImgs[buttonIndex][options[buttonIndex]]
-                display.drawCentered(textImg, button, 2)
-
-                if (['character', 'controller'].includes(button.name) && selectedButton == buttonIndex) {
-
-                    titleMap.objects.ui.filter(x => x.name == button.name && x.type != 'menu').forEach(arrow => {
-
-                        if (arrow.name == 'controller' && textImgs[1].length == 1) return
-                        display.drawFrame([arrowImg, 0, 0, arrowImg.width, arrowImg.height], [arrow.x, arrow.y, arrow.width, arrow.height], arrow.type == 'right' ? 1 : 0)
-                    })
-                }
-
-            })
-
+            uiManager.render()
             display.draw(previewImg, 0, 0, previewImg.width, previewImg.height, preview.x, preview.y, preview.width, preview.height)
-
         },
         update() {
-            textImgs[1] = getInputOptions()
+            buttons.forEach((x, i) => x.img = selectedButton == i ? buttonImgSelected : buttonImg)
+            inputs = getInputOptions()
             if (controller.down.once) {
                 selectedButton = increment(selectedButton, menuButtons)
             }
             if (controller.up.once) {
                 selectedButton = decrement(selectedButton, menuButtons)
             }
-            if (controller.left.once) {
-                options[selectedButton] = increment(options[selectedButton], textImgs[selectedButton])
-            }
-            if (controller.right.once) {
-                options[selectedButton] = decrement(options[selectedButton], textImgs[selectedButton])
+            if (controller.enter.once) {
+                if (selectedButton == 0) {
+                    engine.setState('run')
+                }
+                // if (selectedButton == 1) {
+                //     increment(inputs, options[1])
+                // }
+
             }
 
-        },
-        changeState() {
-            if (controller.enter.once && selectedButton == 0) {
-                return ['run']
-            }
-            return false
         }
     }
 }

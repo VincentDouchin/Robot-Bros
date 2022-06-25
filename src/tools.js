@@ -1,22 +1,22 @@
-const fetchAsset = async (path, type = 'json') => {
-    debugger
-    const res = await fetch(new URL(path.replace('../', '/'), import.meta.url))
 
+const res = import.meta.globEager('../assets/**/*.*')
+const fetchAsset = async (path, type = 'json') => {
+
+    // const res = await fetch(new URL(path.replace('../', '/assets/'), import.meta.url))
+    const url = res[path.replace('../', '../assets/')].default
     // console.log(new URL(path.replace('../', '/'), import.meta.url).href)
-    const loadImage = src =>
+    const loadImage = url =>
         new Promise(async (resolve, reject) => {
-            const blob = await res.blob()
-            const img = document.createElement('img')
-            const objectURL = URL.createObjectURL(blob)
-            img.src = objectURL
+            const img = new Image()
+            img.src = url
 
             img.addEventListener('load', () => resolve(img))
 
             return img
         })
     switch (type) {
-        case 'json': return await res.json()
-        case 'img': return await loadImage(path)
+        case 'json': return url
+        case 'img': return await loadImage(url)
     }
 
 

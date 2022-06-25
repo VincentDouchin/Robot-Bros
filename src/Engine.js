@@ -4,13 +4,15 @@ const Engine = function (states) {
         window.requestAnimationFrame(cycle)
         state.update()
         state.render()
-        setState(state.changeState())
+
 
     }
-    const setState = (_state) => {
+    const setState = (_state, options) => {
         if (!_state) return
-        state = states[_state[0]]
-        state.set(_state[1])
+
+        const s = states[_state]
+        s.set(options)
+        state = s
     }
     return {
         setState,

@@ -1,6 +1,8 @@
-import caveMap from './../../public/levels/cave-level.json'
-import characterTileset from './../../public/tilesets/Characters.json'
-import pointsTileSet from './../../public/tilesets/Points.json'
+import caveMap from './../../assets/levels/cave-level.json'
+import characterTileset from './../../assets/tilesets/Characters.json'
+import pointsTileSet from './../../assets/tilesets/Points.json'
+import ui from '../../assets/tilesets/UI.json'
+
 
 import { TiledMap, getTileset } from './../../src/TiledMap'
 import { Entity, CharacterTileSet, Animator } from './../../src/Characters'
@@ -8,9 +10,9 @@ import { isColliding, collide } from './../../src/collider'
 import { Bullet } from '../Bullet'
 import { Rectangle } from '../Rectangle'
 import { Item } from '../Items'
-const Run = async function (display, controller) {
 
-    // const controller = Controller({ left: 'q', right: 'd', up: ' ', shoot: 'z', change: 'c', pause: 'p', shoot: 'z', down: 's' })
+const Run = async function (display, controller, uiManager, engine) {
+    const UI = await CharacterTileSet(ui)
     const characterTiles = await CharacterTileSet(characterTileset)
     const ant = characterTiles.getCharacter('Ant')
     const binny = characterTiles.getCharacter('Binny')
@@ -84,11 +86,6 @@ const Run = async function (display, controller) {
             if (controller.jump.once) {
                 player.jump()
             }
-            // if (controller.get('change')) {
-            //     controller.set('change', false)
-            //     selectedPlayer++
-            //     player.tiles = playerTiles[selectedPlayer % playerTiles.length]
-            // }
             if (controller.shoot.once) {
                 player.bullets.push(Bullet(player, bulletImg))
             }
@@ -97,9 +94,19 @@ const Run = async function (display, controller) {
 
     display.createMapBuffer(cave, 0)
     display.createMapBuffer(cave, 1)
+    const buttons = cave.objects.ui
+    debugger
     return {
         set() {
+            if (controller.inputs().includes('touch')) {
 
+                uiManager.setUI([
+                    // { button: buttons.find(x => x.name = 'left'), img: UI.getType('arrow').img, bind: controller.left },
+                    // { button: buttons.find(x => x.name = 'right'), img: UI.getType('arrow').img, bind: controller.right },
+                    { button: buttons.find(x => x.name = 'a'), img: UI.getType('a').img, bind: controller.jump },
+                    { button: buttons.find(x => x.name = 'b'), img: UI.getType('b').img, bind: controller.shoot },
+                ])
+            }
         },
         render() {
             display.drawMap(cave)
@@ -124,7 +131,7 @@ const Run = async function (display, controller) {
             display.drawPlayerPoints(points, player)
             player.bullets.forEach(bullet => display.drawBullet(bullet))
             cave.items.forEach(item => display.drawItem(item))
-
+            uiManager.render()
         },
         update() {
             enemySpawnedTimeStamp++
@@ -196,22 +203,19 @@ const Run = async function (display, controller) {
 
             })
             player.bullets.forEach(bullet => bullet.update())
+            if (controller.pause.once) {
+                engine.setState('pause')
+            }
 
 
-            // const blockHitsTop = blockHits.filter(x => x.getTop() < player.getTop())
-            // blockHitsTop.forEach(x => x.setTop(x.getTop() - 8))
+
 
 
 
 
             movePlayer()
         },
-        changeState() {
-            if (controller.pause.once) {
-                return ['pause']
-            }
-            return false
-        }
+
     }
 }
 export { Run }

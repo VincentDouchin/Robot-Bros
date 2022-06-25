@@ -1,7 +1,6 @@
 
 import { Controller } from "./../Controller"
-const Pause = function (display, controller) {
-    // const controller = Controller({ pause: 'p' })
+const Pause = function (display, controller, uiManager, engine) {
     return {
         set() {
 
@@ -10,13 +9,11 @@ const Pause = function (display, controller) {
 
         },
         update() {
-
-        },
-        changeState() {
             if (controller.pause.once) {
-                return ['run']
+                engine.setState('run')
             }
-        }
+        },
+
     }
 }
 export { Pause }

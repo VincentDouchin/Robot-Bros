@@ -50,11 +50,15 @@ const Display = function (height, scale = 1) {
     const mapBuffers = []
     return {
         ctx,
+        scale,
         draw,
 
-        drawCentered(frame1, frame2, factor) {
+        drawCentered(frame1, frame2, factor = 1) {
 
             draw(frame1, 0, 0, frame1.width, frame1.height, frame2.x + frame2.width / 2 - frame1.width * factor / 2, frame2.y + frame2.height / 2 - frame1.height * factor / 2, frame1.width * factor, frame1.height * factor)
+        },
+        drawImg(pos, img) {
+            draw(img, 0, 0, img.width, img.height, pos.x, pos.y, pos.width, pos.height, 1)
         },
         drawFrame(frame, pos, direction = 1) {
             if (direction === 1) {
