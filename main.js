@@ -1,13 +1,18 @@
 import './style.css'
 import UIManager from './src/UiManager'
+//!GameStates
 import { Engine } from './src/Engine'
 import { Run } from './src/Game_States/Run'
 import { Pause } from './src/Game_States/Pause'
 import { Title } from './src/Game_States/Title'
-
+//!Assets
+import AssetManager from './src/AssetManager'
 import Display from './src/Display'
 import { Controller } from './src/Controller'
 (async function () {
+	const assets = await AssetManager({
+		levels: []
+	})
 	const controller = await Controller()
 	document.addEventListener('keydown', () => console.log(controller.inputs()))
 	const display = Display(288)

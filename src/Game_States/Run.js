@@ -1,4 +1,4 @@
-import caveMap from './../../assets/levels/cave-level.json'
+
 import characterTileset from './../../assets/tilesets/Characters.json'
 import pointsTileSet from './../../assets/tilesets/Points.json'
 import ui from '../../assets/tilesets/UI.json'
@@ -95,14 +95,16 @@ const Run = async function (display, controller, uiManager, engine) {
     display.createMapBuffer(cave, 0)
     display.createMapBuffer(cave, 1)
     const buttons = cave.objects.ui
-
+    window.player = player
     return {
         set() {
             uiManager.clear()
             if (controller.inputs().includes('touch')) {
                 uiManager.setUI([
-                    { button: buttons.find(x => x.name = 'a'), img: UI.getType('a').img, bind: controller.jump },
-                    { button: buttons.find(x => x.name = 'b'), img: UI.getType('b').img, bind: controller.shoot },
+                    { button: buttons.find(x => x.name == 'left'), img: UI.getType('arrow').img, bind: controller.left },
+                    { button: buttons.find(x => x.name == 'right'), img: UI.getType('arrow').img, bind: controller.right },
+                    { button: buttons.find(x => x.name == 'a'), img: UI.getType('a').img, bind: controller.jump },
+                    { button: buttons.find(x => x.name == 'b'), img: UI.getType('b').img, bind: controller.shoot },
                 ])
             }
         },

@@ -5,6 +5,7 @@ const Rectangle = (x, y, w, h) => ({
     oldY: y,
     height: h,
     width: w,
+
     getBottom() { return this.y + this.height; },
     getCenterX() { return this.x + this.width * 0.5; },
     getCenterY() { return this.y + this.height * 0.5; },

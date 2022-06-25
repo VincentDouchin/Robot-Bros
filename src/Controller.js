@@ -79,9 +79,10 @@ const Controller = async (keysObject) => {
 
     return {
         inputs() {
-            const inputs = touchSupport ? ['touch'] : ['keyboard']
+            const inputs = touchSupport ? ['touch'] : ['touch']
             if (gamepadSupport) {
                 inputs.push('controller')
+
             }
             return inputs
         },

@@ -1,5 +1,5 @@
 
-import TitleSRC from '../../assets/levels/Title.json'
+
 import { TiledMap } from '../TiledMap'
 import { CharacterTileSet } from '../Characters'
 import ui from '../../assets/tilesets/UI.json'

@@ -21,7 +21,7 @@ const UIManager = function (display) {
     ))
     display.ctx.canvas.addEventListener('mouseup', e => getClickedButtons(e,
         button => {
-            debugger
+
             if (button?.bind) clickDownUp(e, button.bind)
         }
     ))
@@ -33,6 +33,7 @@ const UIManager = function (display) {
     return {
         setUI(_buttons) {
             buttons = _buttons
+
         },
         clear() {
             buttons = []

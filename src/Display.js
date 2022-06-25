@@ -1,6 +1,6 @@
 
 import { indexToCoord } from "./tools"
-
+import Buffer from './Buffer.js'
 const initializeCtx = height => {
     // const canvas = document.createElement('canvas')
     // const ctx = canvas.getContext('2d', { alpha: true })
@@ -8,7 +8,7 @@ const initializeCtx = height => {
     // ctx.canvas.width = 16 / 9 * height
     // ctx.imageSmoothingEnabled = false
     // ctx.canvas.style['image-rendering'] = 'pixelated'
-    const ctx = createBuffer(height)
+    const ctx = Buffer(height)
     const canvas = ctx.canvas
     document.body.append(canvas)
     const resize = () => {
@@ -29,15 +29,7 @@ const initializeCtx = height => {
     resize()
     return ctx
 }
-const createBuffer = height => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d', { alpha: true })
-    ctx.canvas.height = height
-    ctx.canvas.width = 16 / 9 * height
-    ctx.imageSmoothingEnabled = false
-    ctx.canvas.style['image-rendering'] = 'pixelated'
-    return ctx
-}
+
 const Display = function (height, scale = 1) {
     const ctx = initializeCtx(height * scale)
     const draw = (img, sx, sy, sw, sh, x, y, w, h, factor = 1) => ctx.drawImage(img, sx, sy, sw, sh, x * scale, y * scale, w * scale * factor, h * scale * factor)
@@ -82,7 +74,7 @@ const Display = function (height, scale = 1) {
         createMapBuffer(map, buffer) {
 
             if (!map?.buffers) map.buffers = []
-            if (!map.buffers?.[buffer]) map.buffers[buffer] = createBuffer(height * scale)
+            if (!map.buffers?.[buffer]) map.buffers[buffer] = Buffer(height * scale)
             const layer = map.layers[buffer]
 
             layer.forEach((tile) => {
