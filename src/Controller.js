@@ -86,11 +86,7 @@ const Controller = async (keysObject) => {
             return inputs
         },
         ...inputs,
-        // left: () => keys[left].active,
-        // right: () => keys[right].active,
-        // up: () => keys[up].active,
-        // down: () => keys[down].active,
-        // setUp: state => keys[up].active = state,
+
         get: key => keys[getKeyName(key)].active,
         set: (key, state) => keys[getKeyName(key)].active = state
 

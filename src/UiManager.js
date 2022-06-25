@@ -34,6 +34,9 @@ const UIManager = function (display) {
         setUI(_buttons) {
             buttons = _buttons
         },
+        clear() {
+            buttons = []
+        },
         render() {
             buttons.forEach(({ button, img, text, visible }) => {
                 const isVisible = (typeof visible == 'function' ? visible() : visible) ?? true

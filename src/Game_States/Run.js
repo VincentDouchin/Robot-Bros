@@ -95,14 +95,12 @@ const Run = async function (display, controller, uiManager, engine) {
     display.createMapBuffer(cave, 0)
     display.createMapBuffer(cave, 1)
     const buttons = cave.objects.ui
-    debugger
+
     return {
         set() {
+            uiManager.clear()
             if (controller.inputs().includes('touch')) {
-
                 uiManager.setUI([
-                    // { button: buttons.find(x => x.name = 'left'), img: UI.getType('arrow').img, bind: controller.left },
-                    // { button: buttons.find(x => x.name = 'right'), img: UI.getType('arrow').img, bind: controller.right },
                     { button: buttons.find(x => x.name = 'a'), img: UI.getType('a').img, bind: controller.jump },
                     { button: buttons.find(x => x.name = 'b'), img: UI.getType('b').img, bind: controller.shoot },
                 ])

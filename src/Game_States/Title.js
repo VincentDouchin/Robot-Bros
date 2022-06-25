@@ -41,9 +41,9 @@ const Title = async function (display, controller, uiManager, engine) {
         // })),
         { button: menuButtons.find(x => x.name == 'character'), img: buttonImg, text: antImg }
     ]
-    uiManager.setUI(buttons)
     return {
         set() {
+            uiManager.setUI(buttons)
 
         },
         render() {
