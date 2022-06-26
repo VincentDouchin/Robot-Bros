@@ -25,7 +25,7 @@ const UIManager = function (display, controller) {
         const clickedbuttons = getClickedButtons(e)
 
         if (clickedbuttons.length == 0) allButtons().forEach(button => {
-            if (button.bind.active) clickDownUp(e, button.bind)
+            if (button?.bind.active) clickDownUp(e, button.bind)
         })
         clickedbuttons.forEach(button => {
             if (button?.bind) clickDownUp(e, button.bind)
