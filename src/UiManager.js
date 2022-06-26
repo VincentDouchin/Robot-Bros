@@ -1,11 +1,14 @@
-const UIManager = function (display) {
+import { increment, decrement } from "./tools"
+const UIManager = function (display, controller) {
     let buttons = []
-
+    let menuButtons = []
+    const allButtons = () => [...buttons, ...menuButtons]
+    let selectedButton = 0
     const getClickedButtons = (e, callback) => {
         const y = e.offsetY * (display.ctx.canvas.height / display.ctx.canvas.offsetHeight)
         const x = e.offsetX * (display.ctx.canvas.width / display.ctx.canvas.offsetWidth)
 
-        buttons.filter(({ button }) => {
+        allButtons().filter(({ button }) => {
             const top = button.x <= x
             const bottom = button.x + button.width >= x
             const left = button.y <= y
@@ -13,6 +16,7 @@ const UIManager = function (display) {
             return top && bottom && left && right
         }).forEach(callback)
     }
+
     display.ctx.canvas.addEventListener('mousedown', e => getClickedButtons(e,
         button => {
             if (button?.click) button.click()
@@ -25,6 +29,14 @@ const UIManager = function (display) {
             if (button?.bind) clickDownUp(e, button.bind)
         }
     ))
+    display.ctx.canvas.addEventListener('pointermove', e => getClickedButtons(e,
+
+        button => {
+            selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
+
+        }
+    ))
+
     const clickDownUp = (e, key) => {
 
         const state = e.type == 'mousedown'
@@ -35,11 +47,17 @@ const UIManager = function (display) {
             buttons = _buttons
 
         },
+        setMenu(buttons) {
+            menuButtons = buttons
+            console.log(buttons)
+        },
         clear() {
             buttons = []
+            menuButtons = []
+            selectedButton = 0
         },
         render() {
-            buttons.forEach(({ button, img, text, visible }) => {
+            allButtons().forEach(({ button, img, text, visible }) => {
                 const isVisible = (typeof visible == 'function' ? visible() : visible) ?? true
                 if (isVisible) {
 
@@ -48,7 +66,27 @@ const UIManager = function (display) {
                 }
 
             })
+        },
+        update() {
+            if (controller.down.once) {
+                selectedButton = increment(selectedButton, menuButtons)
+            }
+            if (controller.up.once) {
+                selectedButton = decrement(selectedButton, menuButtons)
+            }
+            if (controller.enter.once) {
+                menuButtons[selectedButton].click()
+
+
+            }
+        },
+        get buttons() {
+            return buttons
+        },
+        get selectedButton() {
+            return selectedButton
         }
+
     }
 }
 export default UIManager

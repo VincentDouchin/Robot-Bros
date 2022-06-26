@@ -1,4 +1,4 @@
-import { Animator } from "./Characters"
+import Animator from "./Animator"
 
 const Item = function (img, type, properties = {}) {
 

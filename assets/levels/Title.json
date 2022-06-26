@@ -96,7 +96,7 @@
                  "type":"menu",
                  "visible":true,
                  "width":96,
-                 "x":48,
+                 "x":96,
                  "y":160
                 }, 
                 {
@@ -113,7 +113,7 @@
                  "type":"menu",
                  "visible":true,
                  "width":96,
-                 "x":48,
+                 "x":96,
                  "y":208
                 }, 
                 {
@@ -129,46 +129,36 @@
                 }, 
                 {
                  "height":32,
-                 "id":9,
-                 "name":"controller",
+                 "id":14,
+                 "name":"touch",
+                 "properties":[
+                        {
+                         "name":"order",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
-                 "type":"right",
+                 "type":"text",
                  "visible":true,
-                 "width":32,
-                 "x":160,
+                 "width":64,
+                 "x":16,
                  "y":160
                 }, 
                 {
                  "height":32,
-                 "id":10,
-                 "name":"controller",
+                 "id":15,
+                 "name":"choseCharacter",
+                 "properties":[
+                        {
+                         "name":"order",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
-                 "type":"left",
+                 "type":"text",
                  "visible":true,
-                 "width":32,
-                 "x":0,
-                 "y":160
-                }, 
-                {
-                 "height":32,
-                 "id":11,
-                 "name":"character",
-                 "rotation":0,
-                 "type":"left",
-                 "visible":true,
-                 "width":32,
-                 "x":0,
-                 "y":208
-                }, 
-                {
-                 "height":32,
-                 "id":12,
-                 "name":"character",
-                 "rotation":0,
-                 "type":"right",
-                 "visible":true,
-                 "width":32,
-                 "x":160,
+                 "width":64,
+                 "x":16,
                  "y":208
                 }],
          "opacity":1,
@@ -178,7 +168,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":13,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.5",

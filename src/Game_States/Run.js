@@ -1,48 +1,33 @@
 
-import characterTileset from './../../assets/tilesets/Characters.json'
-import pointsTileSet from './../../assets/tilesets/Points.json'
-import ui from '../../assets/tilesets/UI.json'
-
-
-import { TiledMap, getTileset } from './../../src/TiledMap'
-import { Entity, CharacterTileSet, Animator } from './../../src/Characters'
+import { TiledMap, } from './../../src/TiledMap'
+import Animator from '../Animator'
+import { Entity } from './../../src/Characters'
 import { isColliding, collide } from './../../src/collider'
 import { Bullet } from '../Bullet'
 import { Rectangle } from '../Rectangle'
 import { Item } from '../Items'
 
-const Run = async function (display, controller, uiManager, engine) {
-    const UI = await CharacterTileSet(ui)
-    const characterTiles = await CharacterTileSet(characterTileset)
-    const ant = characterTiles.getCharacter('Ant')
-    const binny = characterTiles.getCharacter('Binny')
-    const bumpy = characterTiles.getCharacter('Bumpy')
-    const devo = characterTiles.getCharacter('Devo')
-    const bushly = characterTiles.getCharacter('Bushly')
-    const explosion = characterTiles.getType('explosion').img
-    const health = characterTiles.getType('health').img
-    const dust = characterTiles.getType('dust').img
-    const bulletImg = characterTiles.getType('bullet').img
-    const smallCoin = characterTiles.getType('small coin').img
-    const bigCoin = characterTiles.getType('big coin').img
-    const heart = characterTiles.getType('heart').img
-    const points = await getTileset(pointsTileSet)
+const Run = function (display, controller, uiManager, engine, assets) {
+    const UI = assets.tilesets.UI
+    const characters = assets.tilesets.Characters
+    const points = assets.tilesets.Points
+
+    const getActions = tiles => tiles.reduce((acc, v) => ({ ...acc, [v.action]: Animator(v.img) }), {})
+    const [ant, binny, capp, tanker, bumpy, devo, bushly] = ['Ant', 'Binny', 'Capp', 'Tanker', 'Bumpy', 'Devo', 'Bushly'].map(x => getActions(characters[x]))
+    const [explosion, health, dust, bulletImg, smallCoin, bigCoin, heart] = ['explosion', 'health', 'dust', 'bullet', 'small coin', 'big coin', 'heart',].map(x => characters[x].img)
+
 
 
 
     const items = [Item(bigCoin, 'coin', { amount: 10 }), Item(smallCoin, 'coin', { amount: 5 }), Item(heart, 'heart',)]
-    const playerTiles = [ant, binny]
-    let selectedPlayer = 0
-    const cave = await TiledMap(caveMap)
-    const player = Entity({ tiles: ant, x: 32, y: 15 * 16 })
-    player.points = 0
-    player.health = 3
-    player.maxHealth = 5
-    player.dust = Animator(dust, 4)
-    player.bullets = []
+    const playerTiles = [ant, binny, capp, tanker]
+    const cave = TiledMap(assets.levels['cave-level'])
+
+    let player = {}
+
 
     const enemyList = [[bumpy, true], [devo, true], [bushly, false]]
-    const enemies = []
+    let enemies = []
 
     let enemySpawned = 0
     let enemySpawnedTimeStamp = 0
@@ -64,7 +49,11 @@ const Run = async function (display, controller, uiManager, engine) {
             enemy.layer = enemy.getBottom()
         }
         if (enemy.getRight() >= cave.right || enemy.getLeft() <= cave.left) {
-            if (enemy.getBottom() == (16 * 16)) teleportUp()
+            if (enemy.getBottom() == (16 * 16)) {
+                teleportUp()
+                player.points -= 5
+            }
+
             changeDirection()
         }
         switch (enemy.direction) {
@@ -95,16 +84,29 @@ const Run = async function (display, controller, uiManager, engine) {
     display.createMapBuffer(cave, 0)
     display.createMapBuffer(cave, 1)
     const buttons = cave.objects.ui
-    window.player = player
     return {
-        set() {
-            uiManager.clear()
-            if (controller.inputs().includes('touch')) {
+        set({ selectedCharacter = 0, touchSelected = false, clear = false }) {
+
+            if (clear) {
+
+                const { x, y } = cave.getSpawnPoint('player')
+                player = Entity({ tiles: playerTiles[selectedCharacter], x, y })
+
+                player.points = 0
+                player.health = 5
+                player.maxHealth = 5
+                player.dust = Animator(dust, 4)
+                player.bullets = []
+                player.lastEnemyHit = null
+                enemies = []
+                cave.items = []
+            }
+            if (touchSelected) {
                 uiManager.setUI([
-                    { button: buttons.find(x => x.name == 'left'), img: UI.getType('arrow').img, bind: controller.left },
-                    { button: buttons.find(x => x.name == 'right'), img: UI.getType('arrow').img, bind: controller.right },
-                    { button: buttons.find(x => x.name == 'a'), img: UI.getType('a').img, bind: controller.jump },
-                    { button: buttons.find(x => x.name == 'b'), img: UI.getType('b').img, bind: controller.shoot },
+                    { button: buttons.find(x => x.name == 'left'), img: UI.arrowLeft.img, bind: controller.left },
+                    { button: buttons.find(x => x.name == 'right'), img: UI.arrowRight.img, bind: controller.right },
+                    { button: buttons.find(x => x.name == 'a'), img: UI.a.img, bind: controller.jump },
+                    { button: buttons.find(x => x.name == 'b'), img: UI.b.img, bind: controller.shoot },
                 ])
             }
         },
@@ -203,6 +205,7 @@ const Run = async function (display, controller, uiManager, engine) {
 
             })
             player.bullets.forEach(bullet => bullet.update())
+            if (player.health === 0 || player.points < 0) engine.setState('lost')
             if (controller.pause.once) {
                 engine.setState('pause')
             }
@@ -218,4 +221,4 @@ const Run = async function (display, controller, uiManager, engine) {
 
     }
 }
-export { Run }
+export default Run

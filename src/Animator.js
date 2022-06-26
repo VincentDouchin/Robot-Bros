@@ -18,3 +18,4 @@ const Animator = function (img, delay = 20) {
         }
     }
 }
+export default Animator

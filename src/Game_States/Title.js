@@ -1,76 +1,74 @@
 
 
 import { TiledMap } from '../TiledMap'
-import { CharacterTileSet } from '../Characters'
-import ui from '../../assets/tilesets/UI.json'
-
-const Title = async function (display, controller, uiManager, engine) {
+import Animator from '../Animator'
+import { increment } from '../tools'
+const Title = function (display, controller, uiManager, engine, assets) {
     // const controller = Controller({ up: 'z', down: 's', left: 'q', right: 'd', enter: ' ' })
-    const UI = await CharacterTileSet(ui)
-    const buttonImg = UI.getType('default').img
-    const buttonImgSelected = UI.getType('selected').img
-    const startImg = UI.getType('start').img
+    const UI = assets.tilesets.UI
 
-    const keyboardImg = UI.getType('keyboard').img
-    const controllerImg = UI.getType('controller').img
-    const touchImg = UI.getType('touch').img
+    const buttonImg = UI.default.img
 
-    const antImg = UI.getType('ant').img
-    const binnyImg = UI.getType('binny').img
-    const previewImg = UI.getType('charcaterPreview').img
-    const arrowImg = UI.getType('arrow').img
-    const titleMap = await TiledMap(TitleSRC)
+    const buttonImgSelected = UI.selected.img
+    const startImg = UI.start.img
+
+    const touchEnabled = UI.enabled.img
+    const touchDisabled = UI.disabled.img
+    const charactersName = ['Ant', 'Binny', 'Capp', 'Tanker']
+    const characters = ['Ant', 'Binny', 'Capp', 'Tanker'].map(x => Animator(assets.tilesets.Characters[x].find(y => y.action == 'moving').img))
+
+
+    const titleMap = TiledMap(assets.levels.Title)
     display.createMapBuffer(titleMap, 0)
     display.createMapBuffer(titleMap, 1)
+    let selectedCharacter = 0
+    let characterImg = UI[charactersName[selectedCharacter]].img
     let selectedButton = 0
-    const options = [0, 0, 0]
-    const inputOptions = { keyboard: keyboardImg, touch: touchImg, controller: controllerImg }
-    const getInputOptions = () => Object.entries(inputOptions).filter(([input, img]) => controller.inputs().includes(input)).map(([input, img]) => img)
-    let inputs
+    let touchSelected = false
+
     // const textImgs = [[startImg], [], [antImg, binnyImg]]
     const menuButtons = titleMap.objects.ui.filter(x => x.type == 'menu').sort((a, b) => a.order - b.order)
+    const text = titleMap.objects.ui.filter(x => x.type == 'text')
     const preview = titleMap.objects.ui.find(x => x.type == 'preview')
-    const increment = (x, arr) => (x + 1) % arr.length
-    const decrement = (x, arr) => x === 0 ? arr.length - 1 : x - 1
 
     const buttons = [
-        { button: menuButtons.find(x => x.name == 'play'), img: buttonImg, text: startImg, click: () => engine.setState('run') },
-        { button: menuButtons.find(x => x.name == 'controller'), img: buttonImg, text: controllerImg, },
-        // ...['controller', 'character'].flatMap(name => ['left', 'right'].map(dir => {
-        //     return { button: titleMap.objects.ui.find(x => x.name == name && x.type == dir), img: arrowImg }
-        // })),
-        { button: menuButtons.find(x => x.name == 'character'), img: buttonImg, text: antImg }
+        { button: menuButtons.find(x => x.name == 'play'), img: buttonImg, text: startImg, click: () => engine.setState('run', { clear: true, selectedCharacter, touchSelected }) },
+        {
+            button: menuButtons.find(x => x.name == 'controller'), img: buttonImg, text: touchDisabled, click() {
+                touchSelected = !touchSelected
+                this.text = touchSelected ? touchEnabled : touchDisabled
+            }
+        },
+        {
+            button: menuButtons.find(x => x.name == 'character'), img: buttonImg, text: characterImg, click() {
+                selectedCharacter = increment(selectedCharacter, characters)
+                this.text = UI[charactersName[selectedCharacter]].img
+            }
+        }
     ]
     return {
         set() {
-            uiManager.setUI(buttons)
+            uiManager.setMenu(buttons)
 
         },
         render() {
             display.drawMap(titleMap)
             uiManager.render()
-            display.draw(previewImg, 0, 0, previewImg.width, previewImg.height, preview.x, preview.y, preview.width, preview.height)
+            text.forEach(x => {
+                display.drawCentered(UI[x.name].img, x, 2)
+            })
+
+
+            display.drawFrame(characters[selectedCharacter].getFrame(), [preview.x, preview.y, preview.width, preview.height], -1)
+
         },
         update() {
-            buttons.forEach((x, i) => x.img = selectedButton == i ? buttonImgSelected : buttonImg)
-            inputs = getInputOptions()
-            if (controller.down.once) {
-                selectedButton = increment(selectedButton, menuButtons)
-            }
-            if (controller.up.once) {
-                selectedButton = decrement(selectedButton, menuButtons)
-            }
-            if (controller.enter.once) {
-                if (selectedButton == 0) {
-                    engine.setState('run')
-                }
-                // if (selectedButton == 1) {
-                //     increment(inputs, options[1])
-                // }
+            characters[selectedCharacter].animate()
+            buttons.forEach((x, i) => x.img = uiManager.selectedButton == i ? buttonImgSelected : buttonImg)
 
-            }
+
 
         }
     }
 }
-export { Title }
+export default Title 

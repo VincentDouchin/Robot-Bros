@@ -1,4 +1,4 @@
-import { fetchAsset } from './tools'
+
 import { Rectangle } from './Rectangle'
 const gravity = 1.2
 const friction = 0.85
@@ -19,9 +19,7 @@ const CharacterTileSet = async function (tileset) {
 			}, {})
 
 		},
-		getType(type) {
-			return tiles.find(x => x.type == type)
-		}
+
 	}
 }
 const Animator = function (img, delay = 20) {
@@ -97,4 +95,4 @@ const Entity = ({ tiles, x, y, reversed = false, moveForce = 0.5, id }) => {
 
 
 
-export { Entity, CharacterTileSet, Animator }
+export { Entity, CharacterTileSet }

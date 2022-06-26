@@ -90,11 +90,13 @@ const Display = function (height, scale = 1) {
             }
         },
         drawPlayerPoints(tileset, { points = 0 }) {
+
             const getCoord = tile => indexToCoord(tileset.tiles.find(x => x.type == tile).id, tileset.columns, tileset.tilewidth, tileset.tileheight)
             const coin = getCoord('coin')
             const pointsString = points.toString()
             const fullPointsString = new Array(6 - pointsString.length).fill(0).join('') + pointsString
             for (let i = 0; i < fullPointsString.length; i++) {
+
                 draw(tileset.img, ...getCoord(fullPointsString[i]), tileset.tilewidth, tileset.tileheight, (25 + i) * 16, 268, 16, 16)
 
             }
