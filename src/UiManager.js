@@ -17,13 +17,13 @@ const UIManager = function (display, controller) {
         }).forEach(callback)
     }
 
-    display.ctx.canvas.addEventListener('mousedown', e => getClickedButtons(e,
+    display.ctx.canvas.addEventListener('pointerdown', e => getClickedButtons(e,
         button => {
             if (button?.click) button.click()
             if (button?.bind) clickDownUp(e, button.bind)
         }
     ))
-    display.ctx.canvas.addEventListener('mouseup', e => getClickedButtons(e,
+    display.ctx.canvas.addEventListener('pointerup', e => getClickedButtons(e,
         button => {
 
             if (button?.bind) clickDownUp(e, button.bind)
@@ -39,7 +39,7 @@ const UIManager = function (display, controller) {
 
     const clickDownUp = (e, key) => {
 
-        const state = e.type == 'mousedown'
+        const state = e.type == 'pointerdown'
         key.getInput(state)
     }
     return {
