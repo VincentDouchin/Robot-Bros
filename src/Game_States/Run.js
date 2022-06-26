@@ -83,6 +83,7 @@ const Run = function (display, controller, uiManager, engine, assets) {
 
     display.createMapBuffer(cave, 0)
     display.createMapBuffer(cave, 1)
+    let savedTouchedSelected = false
     const buttons = cave.objects.ui
     return {
         set({ selectedCharacter = 0, touchSelected = false, clear = false }) {
@@ -101,12 +102,14 @@ const Run = function (display, controller, uiManager, engine, assets) {
                 enemies = []
                 cave.items = []
             }
-            if (touchSelected) {
+            if (touchSelected || savedTouchedSelected) {
+                savedTouchedSelected = true
                 uiManager.setUI([
                     { button: buttons.find(x => x.name == 'left'), img: UI.arrowLeft.img, bind: controller.left },
                     { button: buttons.find(x => x.name == 'right'), img: UI.arrowRight.img, bind: controller.right },
                     { button: buttons.find(x => x.name == 'a'), img: UI.a.img, bind: controller.jump },
                     { button: buttons.find(x => x.name == 'b'), img: UI.b.img, bind: controller.shoot },
+                    { button: buttons.find(x => x.name == 'pause'), img: UI.pause.img, bind: controller.pause },
                 ])
             }
         },

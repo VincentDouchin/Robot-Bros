@@ -8,7 +8,7 @@
  "margin":0,
  "name":"UI",
  "spacing":0,
- "tilecount":25,
+ "tilecount":26,
  "tiledversion":"1.8.5",
  "tileheight":44,
  "tiles":[
@@ -186,6 +186,13 @@
          "imageheight":8,
          "imagewidth":30,
          "type":"lost"
+        }, 
+        {
+         "id":33,
+         "image":"..\/images\/ui\/pause.png",
+         "imageheight":18,
+         "imagewidth":18,
+         "type":"pause"
         }],
  "tilewidth":130,
  "type":"tileset",

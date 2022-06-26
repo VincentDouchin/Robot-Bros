@@ -4,37 +4,37 @@ const UIManager = function (display, controller) {
     let menuButtons = []
     const allButtons = () => [...buttons, ...menuButtons]
     let selectedButton = 0
-    const getClickedButtons = (e, callback) => {
+    const getClickedButtons = (e) => {
         const y = e.offsetY * (display.ctx.canvas.height / display.ctx.canvas.offsetHeight)
         const x = e.offsetX * (display.ctx.canvas.width / display.ctx.canvas.offsetWidth)
 
-        allButtons().filter(({ button }) => {
+        return allButtons().filter(({ button }) => {
             const top = button.x <= x
             const bottom = button.x + button.width >= x
             const left = button.y <= y
             const right = button.y + button.height >= y
             return top && bottom && left && right
-        }).forEach(callback)
+        })
     }
 
-    display.ctx.canvas.addEventListener('pointerdown', e => getClickedButtons(e,
-        button => {
-            if (button?.click) button.click()
+    display.ctx.canvas.addEventListener('pointerdown', e => getClickedButtons(e).forEach(button => {
+        if (button?.click) button.click()
+        if (button?.bind) clickDownUp(e, button.bind)
+    }))
+    display.ctx.canvas.addEventListener('pointerup', e => {
+        const clickedbuttons = getClickedButtons(e)
+
+        if (clickedbuttons.length == 0) allButtons().forEach(button => {
+            if (button.bind.active) clickDownUp(e, button.bind)
+        })
+        clickedbuttons.forEach(button => {
             if (button?.bind) clickDownUp(e, button.bind)
-        }
-    ))
-    display.ctx.canvas.addEventListener('pointerup', e => getClickedButtons(e,
-        button => {
+        })
+    })
+    display.ctx.canvas.addEventListener('pointermove', e => getClickedButtons(e).forEach(button => {
+        selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
 
-            if (button?.bind) clickDownUp(e, button.bind)
-        }
-    ))
-    display.ctx.canvas.addEventListener('pointermove', e => getClickedButtons(e,
-
-        button => {
-            selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
-
-        }
+    }
     ))
 
     const clickDownUp = (e, key) => {
