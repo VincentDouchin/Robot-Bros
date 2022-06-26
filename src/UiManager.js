@@ -22,6 +22,7 @@ const UIManager = function (display, controller) {
         if (button?.bind) clickDownUp(e, button.bind)
     }))
     display.ctx.canvas.addEventListener('pointerup', e => {
+
         const clickedbuttons = getClickedButtons(e)
 
         if (clickedbuttons.length == 0) allButtons().forEach(button => {
@@ -31,11 +32,25 @@ const UIManager = function (display, controller) {
             if (button?.bind) clickDownUp(e, button.bind)
         })
     })
-    display.ctx.canvas.addEventListener('pointermove', e => getClickedButtons(e).forEach(button => {
-        selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
 
-    }
-    ))
+    display.ctx.canvas.addEventListener('touchend', e => {
+
+        const clickedbuttons = getClickedButtons(e)
+
+        if (clickedbuttons.length == 0) allButtons().forEach(button => {
+            if (button?.bind.active) clickDownUp(e, button.bind)
+        })
+        clickedbuttons.forEach(button => {
+            if (button?.bind) clickDownUp(e, button.bind)
+        })
+    })
+    display.ctx.canvas.addEventListener('pointermove', e => {
+        getClickedButtons(e).forEach(button => {
+            selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
+
+        }
+        )
+    })
 
     const clickDownUp = (e, key) => {
 
