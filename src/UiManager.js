@@ -4,17 +4,17 @@ const UIManager = function (display, controller) {
     let menuButtons = []
     const allButtons = () => [...buttons, ...menuButtons]
     let selectedButton = 0
-    const getClickedButtons = (e) => {
+    const isButtonClicked = (button, e) => {
         const y = e.offsetY * (display.ctx.canvas.height / display.ctx.canvas.offsetHeight)
         const x = e.offsetX * (display.ctx.canvas.width / display.ctx.canvas.offsetWidth)
-
-        return allButtons().filter(({ button }) => {
-            const top = button.x <= x
-            const bottom = button.x + button.width >= x
-            const left = button.y <= y
-            const right = button.y + button.height >= y
-            return top && bottom && left && right
-        })
+        const top = button.x <= x
+        const bottom = button.x + button.width >= x
+        const left = button.y <= y
+        const right = button.y + button.height >= y
+        return top && bottom && left && right
+    }
+    const getClickedButtons = (e) => {
+        return allButtons().filter(({ button }) => isButtonClicked(button, e))
     }
 
     display.ctx.canvas.addEventListener('pointerdown', e => getClickedButtons(e).forEach(button => {
@@ -25,31 +25,22 @@ const UIManager = function (display, controller) {
 
         const clickedbuttons = getClickedButtons(e)
 
-        if (clickedbuttons.length == 0) allButtons().forEach(button => {
-            if (button?.bind.active) clickDownUp(e, button.bind)
-        })
         clickedbuttons.forEach(button => {
             if (button?.bind) clickDownUp(e, button.bind)
         })
     })
 
-    display.ctx.canvas.addEventListener('touchend', e => {
 
-        const clickedbuttons = getClickedButtons(e)
-
-        if (clickedbuttons.length == 0) allButtons().forEach(button => {
-            if (button?.bind.active) clickDownUp(e, button.bind)
-        })
-        clickedbuttons.forEach(button => {
-            if (button?.bind) clickDownUp(e, button.bind)
-        })
-    })
     display.ctx.canvas.addEventListener('pointermove', e => {
         getClickedButtons(e).forEach(button => {
             selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
 
-        }
-        )
+        })
+        allButtons().filter(b => b.bind.active && !isButtonClicked(b.button, e)).forEach(b => {
+            clickDownUp(e, b.bind)
+        })
+
+
     })
 
     const clickDownUp = (e, key) => {
