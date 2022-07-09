@@ -27,9 +27,20 @@ const UIManager = function (display, controller) {
     }))
 
     display.ctx.canvas.addEventListener('pointerup', e => {
-
+        debugger
         const unClickedButton = allButtons().find(button => button?.id == e.pointerId)
         if (unClickedButton) clickDownUp(e, unClickedButton.bind)
+    })
+    display.ctx.canvas.addEventListener('pointermove', e => {
+        getClickedButtons(e).forEach(button => {
+            selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
+
+        })
+        allButtons().filter(b => b?.bind?.active && b.id == pointerId).forEach(b => {
+            clickDownUp(e, b.bind)
+        })
+
+
     })
 
     const clickDownUp = (e, key) => {
@@ -71,6 +82,8 @@ const UIManager = function (display, controller) {
             }
             if (controller.enter.once) {
                 menuButtons[selectedButton].click()
+
+
             }
         },
         get buttons() {
