@@ -1,9 +1,7 @@
 const Controller = async (keysObject) => {
-    const layout = await navigator.keyboard.getLayoutMap()
-    const azerty = layout.get('KeyA') == 'a'
-    let gamepadSupport = false
+
+
     let gamepadInterval
-    let touchSupport = navigator.userAgentData.mobile
     const buttons = {
         up: [12],
         down: [13],
@@ -15,14 +13,14 @@ const Controller = async (keysObject) => {
         shoot: [2],
     }
     const keys = {
-        up: [(azerty ? 'KeyZ' : 'KeyW'), 'ArrowUp'],
-        down: ['KeyS', 'ArrowDown'],
-        left: [(azerty ? 'KeyQ' : 'KeyA'), 'ArrowLeft'],
-        right: ['KeyD', 'ArrowRight'],
-        enter: ['Space', 'Enter', 'NumpadEnter'],
-        pause: ['KeyP'],
-        jump: ['KeyL'],
-        shoot: [(azerty ? 'KeyM' : 'Semicolon')]
+        up: ['z', 'ArrowUp'],
+        down: ['s', 'ArrowDown'],
+        left: ['q', 'ArrowLeft'],
+        right: ['d', 'ArrowRight'],
+        enter: [' ', 'Enter', 'NumpadEnter'],
+        pause: ['KeyP', 'Escape'],
+        jump: ['l', ' '],
+        shoot: ['m', ' Enter']
     }
 
 
@@ -62,13 +60,12 @@ const Controller = async (keysObject) => {
     }
     const inputs = Object.keys(keys).reduce((acc, v) => ({ ...acc, [v]: Input() }), {})
 
-    // const keys = { [left]: Input(), [right]: Input(), [up]: Input(), [down]: Input() }
 
     const keyDownUp = (e) => {
 
         e.preventDefault()
         const state = e.type == 'keydown'
-        const key = Object.entries(keys).find(([key, codes]) => codes.includes(e.code))?.[0]
+        const key = Object.entries(keys).find(([key, codes]) => codes.includes(e.key))?.[0]
         if (key) inputs[key].getInput(state)
 
     }
@@ -78,16 +75,7 @@ const Controller = async (keysObject) => {
     const getKeyName = key => Object.entries(keysObject).find(x => x[0] == key)[1]
 
     return {
-        inputs() {
-            const inputs = touchSupport ? ['touch'] : ['touch']
-            if (gamepadSupport) {
-                inputs.push('controller')
-
-            }
-            return inputs
-        },
         ...inputs,
-
         get: key => keys[getKeyName(key)].active,
         set: (key, state) => keys[getKeyName(key)].active = state
 

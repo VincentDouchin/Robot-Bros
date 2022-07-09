@@ -5,6 +5,7 @@ const UIManager = function (display, controller) {
     const allButtons = () => [...buttons, ...menuButtons]
     let selectedButton = 0
     const getClickedButtons = (e) => {
+
         const y = e.offsetY * (display.ctx.canvas.height / display.ctx.canvas.offsetHeight)
         const x = e.offsetX * (display.ctx.canvas.width / display.ctx.canvas.offsetWidth)
 
@@ -19,37 +20,16 @@ const UIManager = function (display, controller) {
 
     display.ctx.canvas.addEventListener('pointerdown', e => getClickedButtons(e).forEach(button => {
         if (button?.click) button.click()
-        if (button?.bind) clickDownUp(e, button.bind)
+        if (button?.bind) {
+            clickDownUp(e, button.bind)
+            button.id = e.pointerId
+        }
     }))
+
     display.ctx.canvas.addEventListener('pointerup', e => {
 
-        const clickedbuttons = getClickedButtons(e)
-
-        if (clickedbuttons.length == 0) allButtons().forEach(button => {
-            if (button?.bind.active) clickDownUp(e, button.bind)
-        })
-        clickedbuttons.forEach(button => {
-            if (button?.bind) clickDownUp(e, button.bind)
-        })
-    })
-
-    display.ctx.canvas.addEventListener('touchend', e => {
-
-        const clickedbuttons = getClickedButtons(e)
-
-        if (clickedbuttons.length == 0) allButtons().forEach(button => {
-            if (button?.bind.active) clickDownUp(e, button.bind)
-        })
-        clickedbuttons.forEach(button => {
-            if (button?.bind) clickDownUp(e, button.bind)
-        })
-    })
-    display.ctx.canvas.addEventListener('pointermove', e => {
-        getClickedButtons(e).forEach(button => {
-            selectedButton = menuButtons.findIndex(x => x.button.name == button.button.name)
-
-        }
-        )
+        const unClickedButton = allButtons().find(button => button?.id == e.pointerId)
+        if (unClickedButton) clickDownUp(e, unClickedButton.bind)
     })
 
     const clickDownUp = (e, key) => {
@@ -91,8 +71,6 @@ const UIManager = function (display, controller) {
             }
             if (controller.enter.once) {
                 menuButtons[selectedButton].click()
-
-
             }
         },
         get buttons() {
