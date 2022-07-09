@@ -3,7 +3,7 @@ https://darkpouetman.github.io/Robot-Bros/
 
 A small game inspired by Mario Bros made with Vanilla JS and Canvas.
 
-Assets from [GrafXkid](https://grafxkid.itch.io/)
+Assets from [Grafxkid](https://grafxkid.itch.io/)
 
 [Play here](https://vincentdouchin.github.io/Robot-Bros/) 
 
