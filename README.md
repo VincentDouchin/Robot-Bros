@@ -1,5 +1,4 @@
 # Robot-Bros
-https://darkpouetman.github.io/Robot-Bros/
 
 A small game inspired by Mario Bros made with Vanilla JS and Canvas.
 
